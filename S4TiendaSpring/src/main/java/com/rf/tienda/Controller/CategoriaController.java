@@ -2,9 +2,11 @@ package com.rf.tienda.Controller;
 
 import java.util.List;
 
+
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import com.rf.tienda.Services.CategoriaService;
 
 @RestController
 @RequestMapping("/categorias")
+@CrossOrigin(origins="*")//Conexión con el frontend
 public class CategoriaController {
 
 	@Autowired
@@ -59,7 +62,7 @@ public class CategoriaController {
 	 * @param c
 	 * @return
 	 */
-	@PostMapping
+	@PostMapping("/registro")
 	public String[] nuevaCategoria(@RequestBody Categoria c) {
 		c.setId_categoria(0);
 		if (c.isValid()) {
