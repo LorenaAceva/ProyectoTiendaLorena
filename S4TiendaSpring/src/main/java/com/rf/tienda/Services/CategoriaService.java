@@ -1,10 +1,9 @@
 package com.rf.tienda.Services;
 
 import org.springframework.stereotype.Service;
-
+import com.rf.tienda.Repository.CategoriaRepository;
 
 import com.rf.tienda.Entity.Categoria;
-
 
 /**
  * Esta clase hereda de la genérica, ya que los métodos serán usados en otras
@@ -15,6 +14,13 @@ import com.rf.tienda.Entity.Categoria;
  */
 
 @Service
-public class CategoriaService extends GenericoServicie <Categoria, Integer>  {
+public class CategoriaService extends GenericoServicie <Categoria, Integer,CategoriaRepository>  {
+
+	@Override
+	public Categoria buscarID(Integer id) {
+		
+		return null;
+	}
+	
 
 }

@@ -6,6 +6,8 @@ import jakarta.persistence.Transient;
 
 public interface CategoriaModelo {
 	
+	
+	
 	@Transient //Puede ser que no nos grabe en la BBDD por estar activa esta anotación
 	@JsonIgnore
 	public boolean isValidInsert();

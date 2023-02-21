@@ -2,15 +2,20 @@ package com.rf.tienda.Entity;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.rf.tienda.Modelo.CategoriaModelo;
+import com.rf.tienda.exception.DomainException;
 import com.rf.tienda.util.Validator;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * 
@@ -21,6 +26,7 @@ import jakarta.persistence.Table;
  *
  */
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "CATEGORIA")
 public class Categoria implements Serializable, CategoriaModelo {
@@ -32,10 +38,10 @@ public class Categoria implements Serializable, CategoriaModelo {
 	@Column(name = "ID_CATEGORIA")
 	private int id_categoria; // identificador categoria
 
-	@Column(name = "CAT_NOMBRE")
+	@Column(name = "CAT_NOMBRE",nullable=false)
 	private String cat_nombre; // nombre de la categoria
 
-	@Column(name = "CAT_DESCRIPCION")
+	@Column(name = "CAT_DESCRIPCION", nullable=false)
 	private String cat_descripcion; // descripcion de la categoria
 
 	public Categoria() {
@@ -45,10 +51,16 @@ public class Categoria implements Serializable, CategoriaModelo {
 	 * Este método evitará que haya un campo vacio
 	 * @return
 	 */
+	
+	static Categoria categoria= new Categoria();
+	
+	@Transient
+	@JsonIgnore
 	public boolean isValid() {
 		return !Validator.isVacio(cat_nombre) && id_categoria > 0;
 	}
 
+	
 	/**
 	 * Getter para identificador de categoria
 	 * 
@@ -81,11 +93,12 @@ public class Categoria implements Serializable, CategoriaModelo {
 	 * @throws Exception
 	 * 
 	 */
-	public void setCat_nombre(String cat_nombre) {
+	public void setCat_nombre(String cat_nombre)throws DomainException {
 		if (Validator.cumpleLongitud(cat_nombre,5,50)) {
 			this.cat_nombre = cat_nombre;
 		} else {
 			System.out.println("El tamaño del nombre no es correcto");
+			throw new DomainException("Error longitud");
 		}
 
 	}
@@ -100,15 +113,13 @@ public class Categoria implements Serializable, CategoriaModelo {
 	}
 
 	/**
-	 * Setter para la descripcion de categoria y su filtro de longitud máxima
+	 * Setter para la descripcion de categoria y su filtro de longitud máxima,
+	 * nos aseguramos que no exceda esa longitud ayudándonos del metodo StringUtils.truncate
 	 * 
 	 */
+	
 	public void setCat_descripcion(String cat_descripcion) {
-		if (Validator.cumpleLongitudMax(cat_descripcion, 200)) {
-			this.cat_descripcion = cat_descripcion;
-		} else {
-			System.out.println("El tamaño del nombre no es correcto");
-		}
+		this.cat_descripcion =  StringUtils.truncate(cat_descripcion,200);
 	}
 	
 
@@ -162,8 +173,8 @@ public class Categoria implements Serializable, CategoriaModelo {
 		return "Categoria [id_categoria=" + id_categoria + ", cat_nombre=" + cat_nombre + ", cat_descripcion="
 				+ cat_descripcion + "]";
 	}
-	
-	//@Override
+		
+	@Override
 	public boolean isValidInsert() {
 		boolean result= !Validator.isVacio(cat_nombre);
 		System.out.println(Validator.isVacio(cat_nombre));
@@ -171,7 +182,7 @@ public class Categoria implements Serializable, CategoriaModelo {
 		return result;
 	}
 	
-	//@Override
+	@Override
 	public boolean isValidUpdate() {
 		boolean result=!Validator.isVacio(cat_nombre)&&
 				id_categoria > 0;

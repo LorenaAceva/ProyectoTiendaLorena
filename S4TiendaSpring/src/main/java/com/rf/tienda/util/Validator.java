@@ -354,6 +354,6 @@ public class Validator {
 	 */
 	public static boolean isVacio(String texto) {
 		
-		return texto.trim().isEmpty();
+		return (texto==null || texto.equals(""));
 	}
 }

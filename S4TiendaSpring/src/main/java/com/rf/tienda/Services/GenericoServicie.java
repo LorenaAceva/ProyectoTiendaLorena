@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import com.rf.tienda.Modelo.CategoriaModelo;
+
 /**
  * Clase abstracta con los métodos genéricos que usaran varias entidades
  * 
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public abstract class GenericoServicie<T, ID> {
+public abstract class GenericoServicie<T extends CategoriaModelo,ID, R extends JpaRepository<T, ID>> implements GenericoServiceI<T,ID> {
 
 	/**
 	 * Usa el JpaRepository para hacer los métodos
@@ -32,7 +34,7 @@ public abstract class GenericoServicie<T, ID> {
 	 */
 
 	public List<T> listar() {
-		return cRepository.findAll();
+		return (List<T>)cRepository.findAll();
 	}
 
 	/**
@@ -41,8 +43,15 @@ public abstract class GenericoServicie<T, ID> {
 	 * @param entity
 	 * @return
 	 */
-	public T insertar(T entity) {
-		return cRepository.save(entity);
+	public boolean insertar(T entity) {
+		if(entity.isValidInsert()) {
+			cRepository.save(entity);
+			return true;
+		}else {
+			
+		return false;
+		}
+		
 	}
 
 	/**
@@ -51,8 +60,13 @@ public abstract class GenericoServicie<T, ID> {
 	 * @param entity
 	 * @return
 	 */
-	public T modificar(T entity) {
-		return cRepository.save(entity);
+	public boolean modificar(T entity) {
+		if (entity.isValidUpdate()) {
+			cRepository.save(entity);
+			return true;
+		}else {
+		return false;
+		}
 	}
 
 	/**
@@ -60,8 +74,9 @@ public abstract class GenericoServicie<T, ID> {
 	 * 
 	 * @param id
 	 */
-	public void borrar(ID id) {
+	public boolean borrarById(ID id) {
 		cRepository.deleteById(id);
+		return true;
 
 	}
 
